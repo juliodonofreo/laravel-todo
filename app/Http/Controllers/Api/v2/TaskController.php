@@ -10,9 +10,6 @@ use App\Http\Controllers\Controller;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return TaskResource::collection(auth()->user()->tasks()->get());
@@ -23,7 +20,6 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         $task = $request->user()->tasks()->create($request->validated());
-
         return TaskResource::make($task);
     }
 
@@ -42,6 +38,7 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize("update", $task);
         $task->update($request->validated());
 
         return TaskResource::make($task);
@@ -52,6 +49,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize("delete", $task);
         $task->delete();
 
         return response()->noContent();
